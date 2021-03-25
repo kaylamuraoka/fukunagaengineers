@@ -1,0 +1,47 @@
+{
+  "name": "fukunagaengineers",
+  "version": "1.0.0",
+  "description": "",
+  "main": "backend/server.js",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cloudinary": "^1.25.1",
+    "concurrently": "^6.0.0",
+    "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-fileupload": "^1.2.1",
+    "googleapis": "^68.0.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.12.2",
+    "node-fetch": "^2.6.1",
+    "nodemailer": "^6.5.0",
+    "nodemon": "^2.0.7"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node backend/server.js",
+    "client": "npm start --prefix client",
+    "dev": "concurrently \"nodemon backend/server.js\" \"npm run client\"",
+    "install": "cd client && npm install",
+    "build": "cd client && npm run build",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install npm && run build",
+    "reset": "node backend/utils/dbReset.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kaylamuraoka/fukunagaengineers.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kaylamuraoka/fukunagaengineers/issues"
+  },
+  "homepage": "https://github.com/kaylamuraoka/fukunagaengineers#readme",
+  "engines": {
+    "node": "10.16.0"
+  }
+}
