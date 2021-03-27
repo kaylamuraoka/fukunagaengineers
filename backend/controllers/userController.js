@@ -32,7 +32,7 @@ const userController = {
         return res.status(400).json({ msg: "An account with this phone number already exists. Please enter your mobile phone number." })
 
       if (!validatePassword(password))
-        return res.status(400).json({ msg: "Password must contain at least six characters, including at least one letter and one number." })
+        return res.status(400).json({ msg: "Password must be at least six characters long." })
 
       const passwordHash = await bcrypt.hash(password, 12)
 
@@ -144,7 +144,7 @@ const userController = {
       console.log(password)
 
       if (!validatePassword(password))
-        return res.status(400).json({ msg: "Password must be 6-20 characters, and contain at least one numeric digit, one uppercase and one lowercase letter." })
+        return res.status(400).json({ msg: "Password must be at least six characters long." })
 
       const passwordHash = await bcrypt.hash(password, 12)
 
@@ -244,10 +244,10 @@ function validatePhone(phone) {
 }
 
 function validatePassword(password) {
-  if (password.match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/)) {
-    return true;
+  if (password.length < 6) {
+    return false;
   }
-  return false;
+  return true;
 }
 
 const createActivationToken = (payload) => {
