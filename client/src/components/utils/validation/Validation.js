@@ -19,8 +19,8 @@ export const isPhone = phone => {
 }
 
 export const isValidPassword = password => {
-  if (password.match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/)) return true
-  return false
+  if (password.length < 6) return false
+  return true
 }
 
 export const isMatch = (password, cf_password) => {
