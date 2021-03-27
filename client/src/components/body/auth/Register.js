@@ -90,7 +90,7 @@ function Register() {
 
         <div>
           <label htmlFor="phone">Phone Number</label>
-          <input type="phone" placeholder="Enter phone number" id="phone" value={phone} name="phone" onChange={handleChangeInput} className={
+          <input type="tel" pattern="[0-9]{3}[0-9]{3}[0-9]{4}" placeholder="Enter phone number" id="phone" value={phone} name="phone" onChange={handleChangeInput} className={
             !isPhone(user.phone) || (user.err === "An account with this phone number already exists. Please enter your mobile phone number.")
               ? "invalid-input"
               : "valid-input"
