@@ -42,7 +42,7 @@ function Register() {
       return setUser({ ...user, err: "Please enter a valid phone number.", success: '' })
 
     if (!isValidPassword(password))
-      return setUser({ ...user, err: "Password must contain at least six characters, including at least one letter and one number.", success: '' })
+      return setUser({ ...user, err: "Password must be at least six characters long.", success: '' })
 
     if (!isMatch(password, cf_password))
       return setUser({ ...user, err: "Passwords do not match.", success: '' })
@@ -105,7 +105,7 @@ function Register() {
               ? "invalid-input"
               : "valid-input"
           } />
-          {!isValidPassword(user.password) ? (<p className="invalid-feedback">Password must contain at least six characters, including at least one letter and one number.</p>) : (null)}
+          {!isValidPassword(user.password) ? (<p className="invalid-feedback">Password must be at least six characters long.</p>) : (null)}
         </div>
 
         <div>
