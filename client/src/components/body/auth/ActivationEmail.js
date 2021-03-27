@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import axios from 'axios'
 import { showErrMsg, showSuccessMsg } from "../../utils/notification/Notification"
-import "./auth.css"
 
 const ActivationEmail = () => {
   const { activation_token } = useParams()

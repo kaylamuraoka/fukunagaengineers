@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { Link, useHistory } from "react-router-dom"
-import "./auth.css"
 import axios from "axios"
 import { showErrMsg, showSuccessMsg } from "../../utils/notification/Notification"
 import { dispatchLogin } from "../../../redux/actions/authAction"
