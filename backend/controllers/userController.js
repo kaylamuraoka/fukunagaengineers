@@ -22,6 +22,7 @@ const userController = {
       if (!validatePhone(phone))
         return res.status(400).json({ msg: "Please enter a valid phone number." })
 
+
       const user = await Users.findOne({ email })
       if (user)
         return res.status(400).json({ msg: "An account with this email address already exists. Try login." })
@@ -31,7 +32,7 @@ const userController = {
         return res.status(400).json({ msg: "An account with this phone number already exists. Please enter your mobile phone number." })
 
       if (!validatePassword(password))
-        return res.status(400).json({ msg: "Password must be 6-20 characters, and contain at least one numeric digit, one uppercase and one lowercase letter." })
+        return res.status(400).json({ msg: "Password must contain at least six characters, including at least one letter and one number." })
 
       const passwordHash = await bcrypt.hash(password, 12)
 
@@ -47,7 +48,7 @@ const userController = {
 
       console.log({ activation_token })
 
-      res.json({ msg: "Register Success! Please activate your email to start." })
+      res.json({ msg: "Your account has been created successfully! Please check your email for a verification link to activate your account." })
 
     } catch (err) {
       return res.status(500).json({ msg: err.message })
@@ -130,7 +131,9 @@ const userController = {
 
       sendMail(email, url, "Reset your password")
 
-      res.json({ msg: "Re-sent the password, please check your email." })
+      res.json({
+        msg: `Password Reset Email Sent. An email hasbeen sent to your email address, ${email}. Follow the directions in the email to reset your password.`
+      })
     } catch (err) {
       return res.status(500).json({ msg: err.message })
     }
@@ -241,7 +244,7 @@ function validatePhone(phone) {
 }
 
 function validatePassword(password) {
-  if (password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/)) {
+  if (password.match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/)) {
     return true;
   }
   return false;
