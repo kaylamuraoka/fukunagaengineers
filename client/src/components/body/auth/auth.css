@@ -110,16 +110,22 @@
   margin-top: 15px;
 }
 
-.fg_pass .row input.invalid-input{
+.fg_pass .row input.invalid-input {
   border: 2px solid rgba(255, 0, 0, .5);
 }
 
-.fg_pass .row input.valid-input{
+.fg_pass .row input.valid-input {
   border: 2px solid rgb(0, 128, 0, .5);
 }
 
-.fg_pass .row p.invalid-feedback{
+.fg_pass .row p.invalid-feedback {
   color: rgba(255, 0, 0, .6);
+  font-weight: 500;
+  font-size: small;
+  margin-top: -2px;
+}
+.fg_pass .row p.valid-feedback {
+  color: rgb(0, 128, 0, .6);
   font-weight: 500;
   font-size: small;
   margin-top: -2px;
