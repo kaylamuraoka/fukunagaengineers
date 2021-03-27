@@ -25,7 +25,7 @@ const Body = () => {
 
         <Route path="/user/activate/:activation_token" component={ActivationEmail} exact />
 
-        <Route path="/profile" component={isLogged ? NotFound : Profile} exact />
+        <Route path="/profile" component={isLogged ? Profile : NotFound} exact />
       </Switch>
     </section>
   )
