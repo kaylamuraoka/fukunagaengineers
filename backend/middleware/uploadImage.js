@@ -14,7 +14,7 @@ module.exports = async function (req, res, next) {
 
     if (file.mimetype !== 'image/jpeg' && file.mimetype !== 'image/png') {
       removeTmp(file.tempFilePath)
-      return res.status(400).json({ msg: "File format is incorrect." })
+      return res.status(400).json({ msg: "Invalid File format. You may only upload JPG, JPEG, PNG files." })
     } // 1mb
 
     next()
