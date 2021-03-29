@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from 'react-router-dom'
 import { isValidPassword, isMatch } from '../../utils/validation/Validation'
 import { showErrMsg, showSuccessMsg } from '../../utils/notification/Notification'
+import { dispatchGetAllUsers, fetchAllUsers } from '../../../redux/actions/usersActions'
 
 const initialState = {
   name: '',
@@ -18,6 +19,8 @@ function Profile() {
   const auth = useSelector(state => state.auth)
   const token = useSelector(state => state.token)
 
+  const users = useSelector(state => state.users)
+
   const { user, isAdmin } = auth
   const [data, setData] = useState(initialState)
   const { name, phone, password, cf_password, err, success } = data
@@ -30,6 +33,15 @@ function Profile() {
     const { name, value } = e.target
     setData({ ...data, [name]: value, err: '', success: '' })
   }
+
+  const dispatch = useDispatch()
+  useEffect(() => {
+    if (isAdmin) {
+      fetchAllUsers(token).then(res => {
+        dispatch(dispatchGetAllUsers(res))
+      })
+    }
+  }, [token, isAdmin, dispatch, callback])
 
   const changeAvatar = async (e) => {
     e.preventDefault()
@@ -103,6 +115,7 @@ function Profile() {
     if (password) updatePassword()
   }
 
+
   return (
     <>
       {err && showErrMsg(err)}
@@ -161,21 +174,39 @@ function Profile() {
           <div style={{ overflowX: "auto" }}>
             <table className="users">
               <thead>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>Admin</th>
-                <th>Action</th>
+                <tr>
+                  <th scope="col">ID</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Admin</th>
+                  <th>Action</th>
+                </tr>
               </thead>
               <tbody>
-                <td>ID</td>
-                <td>Name</td>
-                <td>Email</td>
-                <td>Phone</td>
-                <td>Admin</td>
-                <td>Action</td>
-
+                {
+                  users.map(user => (
+                    <tr key={user._id} scope="row">
+                      <td>{user._id}</td>
+                      <td>{user.name}</td>
+                      <td>{user.email}</td>
+                      <td>{user.phone}</td>
+                      <td>
+                        {
+                          user.role === 1
+                            ? <i className="fas fa-check" title="Admin"></i>
+                            : <i className="fas fa-times" title="User"></i>
+                        }
+                      </td>
+                      <td>
+                        <Link to={`/edit_user/${user._id}`}>
+                          <i className="fas fa-edit" title="Edit"></i>
+                        </Link>
+                        <i className="fas fa-trash-alt" title="Remove"></i>
+                      </td>
+                    </tr>
+                  ))
+                }
               </tbody>
             </table>
           </div>
