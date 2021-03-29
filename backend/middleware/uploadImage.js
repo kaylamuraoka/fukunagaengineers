@@ -9,7 +9,7 @@ module.exports = async function (req, res, next) {
 
     if (file.size > 1024 * 1024) {
       removeTmp(file.tempFilePath)
-      return res.status(400).json({ msg: "Size too large." })
+      return res.status(400).json({ msg: "The file that you are trying to upload exceeds the 1 MB size limit. Please select a file less than 1 MB." })
     } // 1mb
 
     if (file.mimetype !== 'image/jpeg' && file.mimetype !== 'image/png') {
