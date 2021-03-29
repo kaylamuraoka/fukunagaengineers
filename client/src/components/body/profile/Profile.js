@@ -35,7 +35,7 @@ function Profile() {
           <span>
             <i className="fas fa-camera"></i>
             <p>Change</p>
-            <input type="file" name="file" id="file_up" />
+            <input type="file" name="file" id="file_upload" />
           </span>
         </div>
 
@@ -68,10 +68,10 @@ function Profile() {
       </div>
 
       <div className="col-right">
-        <h2>{isAdmin ? "Users" : "MyOrders"}</h2>
+        <h2>{isAdmin ? "Users" : "My Orders"}</h2>
 
         <div style={{ overflowX: "auto" }}>
-          <table className="customers">
+          <table className="users">
             <thead>
               <th>ID</th>
               <th>Name</th>
@@ -81,7 +81,7 @@ function Profile() {
               <th>Action</th>
             </thead>
             <tbody>
-              <th>ID</th>
+              <td>ID</td>
               <td>Name</td>
               <td>Email</td>
               <td>Phone</td>
