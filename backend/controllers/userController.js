@@ -3,6 +3,11 @@ const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 const sendMail = require("./sendMail")
 
+const { google } = require('googleapis')
+const { OAuth2 } = google.auth
+
+const client = new OAuth2(process.env.MAILING_SERVICE_CLIENT_ID)
+
 const CLIENT_URL = process.env.CLIENT_URL
 
 const userController = {
@@ -93,7 +98,7 @@ const userController = {
       res.cookie('refreshtoken', refresh_token, {
         httpOnly: true,
         path: '/user/refresh_token',
-        maxAge: 7 * 24 * 60 * 60 * 100 // 7 days
+        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
       })
 
       res.json({ msg: "Login success!" })
@@ -221,6 +226,88 @@ const userController = {
       return res.status(500).json({ msg: err.message })
     }
   },
+  googleLogin: async (req, res) => {
+    try {
+      const { tokenId } = req.body
+
+      const verify = await client.verifyIdToken({
+        idToken: tokenId,
+        audience: process.env.MAILING_SERVICE_CLIENT_ID
+      })
+
+      console.log(verify)
+      const { email } = verify.payload
+
+      const password = email + process.env.GOOGLE_SECRET
+
+      const passwordHash = await bcrypt.hash(password, 12)
+
+      const user = await Users.findOne({ email })
+      if (user) {
+        const isMatch = await bcrypt.compare(password, user.password)
+        if (!isMatch)
+          return res.status(400).json({ msg: 'Password is incorrect.' })
+
+        const refresh_token = createRefreshToken({ id: user._id })
+        res.cookie('refreshtoken', refresh_token, {
+          httpOnly: true,
+          path: '/user/refresh_token',
+          maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+        })
+
+        res.json({ msg: "Login success!" })
+      } else {
+        return res.status(400).json({ msg: "Please create an account first before you may login with Google." })
+      }
+
+    } catch (err) {
+      return res.status(500).json({ msg: err.message })
+    }
+  },
+  googleRegister: async (req, res) => {
+    try {
+      const { tokenId } = req.body
+
+      const verify = await client.verifyIdToken({
+        idToken: tokenId,
+        audience: process.env.MAILING_SERVICE_CLIENT_ID
+      })
+
+      console.log(verify)
+      const { email_verified, email, name, picture } = verify.payload
+
+      const password = email + process.env.GOOGLE_SECRET
+
+      const passwordHash = await bcrypt.hash(password, 12)
+
+      if (!email_verified)
+        return res.status(400).json({ msg: 'Email verification failed.' })
+
+      const user = await Users.findOne({ email })
+      if (user) {
+        return res.status(400).json({ msg: "An account with this email address already exists. Try login." })
+      } else {
+        const phone = req.body.phone
+
+        if (!validatePhone(phone))
+          return res.status(400).json({ msg: "Please enter a valid phone number." })
+
+        const phoneExists = await Users.findOne({ phone })
+        if (phoneExists)
+          return res.status(400).json({ msg: "An account with this phone number already exists. Please enter your mobile phone number." })
+
+        const newUser = new Users({
+          name, email, phone: phone, password: passwordHash, avatar: picture
+        })
+
+        await newUser.save()
+        res.json({ msg: "Your account has been created successfully! Please login with your Google account." })
+      }
+
+    } catch (err) {
+      return res.status(500).json({ msg: err.message })
+    }
+  }
 }
 
 

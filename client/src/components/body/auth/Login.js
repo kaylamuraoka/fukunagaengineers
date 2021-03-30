@@ -4,6 +4,7 @@ import axios from "axios"
 import { showErrMsg, showSuccessMsg } from "../../utils/notification/Notification"
 import { dispatchLogin } from "../../../redux/actions/authAction"
 import { useDispatch } from "react-redux"
+import { GoogleLogin } from 'react-google-login';
 
 const initialState = {
   email: '',
@@ -11,7 +12,6 @@ const initialState = {
   err: '',
   success: ""
 }
-
 
 function Login() {
   const [user, setUser] = useState(initialState)
@@ -42,6 +42,24 @@ function Login() {
     }
   }
 
+  const handleGoogleLogin = async (response) => {
+    try {
+
+      const res = await axios.post('/user/google_login', {
+        tokenId: response.tokenId
+      })
+
+      setUser({ ...user, err: '', success: res.data.msg })
+      localStorage.setItem('firstLogin', true)
+
+      dispatch(dispatchLogin())
+      history.push("/")
+    } catch (err) {
+      (err.response.data.msg && err.response.data.msg !== 'The verifyIdToken method requires an ID Token') &&
+        setUser({ ...user, err: err.response.data.msg, success: '' })
+    }
+  }
+
   return (
     <div className="login_page">
       <h2>Login</h2>
@@ -66,7 +84,17 @@ function Login() {
 
       </form>
 
-      <div className="hr">Or Login With</div>
+      <div className="hr">Signed up with Google?</div>
+
+      <div className="social">
+        <GoogleLogin
+          clientId="998673085002-9pcvhkm6umtj4ephltodmt3u24180a6k.apps.googleusercontent.com"
+          buttonText="Login with Google"
+          onSuccess={handleGoogleLogin}
+          onFailure={handleGoogleLogin}
+          cookiePolicy={'single_host_origin'}
+        />
+      </div>
 
       <p>Don't have an account yet? <Link to="/register">Register</Link></p>
     </div>

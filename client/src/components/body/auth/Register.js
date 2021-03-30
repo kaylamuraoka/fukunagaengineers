@@ -3,6 +3,7 @@ import { Link } from "react-router-dom"
 import axios from "axios"
 import { showErrMsg, showSuccessMsg } from "./../../utils/notification/Notification"
 import { isEmpty, isEmail, isName, isPhone, isValidPassword, isMatch } from "../../utils/validation/Validation"
+import { GoogleLogin } from 'react-google-login';
 
 const initialState = {
   name: '',
@@ -13,7 +14,6 @@ const initialState = {
   err: '',
   success: ""
 }
-
 
 function Register() {
   const [user, setUser] = useState(initialState)
@@ -57,6 +57,23 @@ function Register() {
     } catch (err) {
       err.response.data.msg &&
         setUser({ ...user, err: err.response.data.msg, success: "" })
+    }
+  }
+
+  const handleGoogleRegister = async (response) => {
+    try {
+      let phone = window.prompt("What's your mobile phone number?");
+
+      const res = await axios.post('/user/google_register', {
+        phone: phone,
+        tokenId: response.tokenId
+      })
+
+      setUser({ ...user, err: '', success: res.data.msg })
+
+    } catch (err) {
+      err.response.data.msg &&
+        setUser({ ...user, err: err.response.data.msg, success: '' })
     }
   }
 
@@ -122,6 +139,18 @@ function Register() {
         </div>
 
       </form>
+
+      <div className="hr">Or Register With</div>
+
+      <div className="social">
+        <GoogleLogin
+          clientId="998673085002-9pcvhkm6umtj4ephltodmt3u24180a6k.apps.googleusercontent.com"
+          buttonText="Login with google"
+          onSuccess={handleGoogleRegister}
+          onFailure={handleGoogleRegister}
+          cookiePolicy={'single_host_origin'}
+        />
+      </div>
 
       <p>Already have an account? <Link to="/login">Login</Link></p>
     </div>
