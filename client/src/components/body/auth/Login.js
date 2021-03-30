@@ -66,6 +66,8 @@ function Login() {
 
       </form>
 
+      <div className="hr">Or Login With</div>
+
       <p>Don't have an account yet? <Link to="/register">Register</Link></p>
     </div>
   )
