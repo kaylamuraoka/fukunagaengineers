@@ -313,12 +313,11 @@ const userController = {
     try {
       const { accessToken, userID } = req.body
 
-      const URL = ` "https://graph.facebook.com/v2.9/${userID}/fields=id,name,email,picture"?access_token=${accessToken}`
+      const URL = `https://graph.facebook.com/v2.9/${userID}/?fields=id,name,email,picture&access_token=${accessToken}`
 
       const data = await fetch(URL).then(res => res.json()).then(res => { return res })
 
-      console.log(data)
-      const { email, name, picture } = data
+      const { email } = data
 
       const password = email + process.env.FACEBOOK_SECRET
 
