@@ -4,7 +4,7 @@ const mongoose = require('mongoose')
 const cors = require('cors')
 const cookieParser = require("cookie-parser")
 const fileUpload = require('express-fileupload')
-
+const path = require('path')
 
 const app = express()
 app.use(express.json())
@@ -19,18 +19,15 @@ app.use('/user', require("./routes/userRouter"))
 app.use('/api', require('./routes/upload'))
 
 // Connect to mongodb
-mongoose.connect(process.env.MONGODB_URL, {
+const URI = process.env.MONGODB_UR
+mongoose.connect(URI, {
   useCreateIndex: true,
   useFindAndModify: false,
   useNewUrlParser: true,
   useUnifiedTopology: true,
 }, err => {
   if (err) throw err;
-  console.log("Database Connected Successfully")
-})
-
-app.use('/', (req, res, next) => {
-  res.json({ msg: "Hello Everyone" })
+  console.log("Connected to MongoDB Successfully")
 })
 
 // app.use(express.static(path.join(__dirname, '../build')))
