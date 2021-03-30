@@ -4,6 +4,7 @@ import axios from "axios"
 import { showErrMsg, showSuccessMsg } from "./../../utils/notification/Notification"
 import { isEmpty, isEmail, isName, isPhone, isValidPassword, isMatch } from "../../utils/validation/Validation"
 import { GoogleLogin } from 'react-google-login';
+import FacebookLogin from 'react-facebook-login'
 
 const initialState = {
   name: '',
@@ -62,6 +63,7 @@ function Register() {
 
   const handleGoogleRegister = async (response) => {
     try {
+      // if (response.data.msg !== 'The verifyIdToken method requires an ID Token')
       let phone = window.prompt("What's your mobile phone number?");
 
       const res = await axios.post('/user/google_register', {
@@ -71,6 +73,25 @@ function Register() {
 
       setUser({ ...user, err: '', success: res.data.msg })
 
+    } catch (err) {
+      (err.response.data.msg && err.response.data.msg !== 'The verifyIdToken method requires an ID Token') &&
+        setUser({ ...user, err: err.response.data.msg, success: '' })
+    }
+  }
+
+
+  const handleFacebookRegister = async (response) => {
+    try {
+      let phone = window.prompt("What's your mobile phone number?");
+      const { accessToken, userID } = response
+
+      const res = await axios.post('/user/facebook_register', {
+        phone: phone,
+        accessToken,
+        userID
+      })
+
+      setUser({ ...user, err: '', success: res.data.msg })
     } catch (err) {
       err.response.data.msg &&
         setUser({ ...user, err: err.response.data.msg, success: '' })
@@ -150,6 +171,12 @@ function Register() {
           onFailure={handleGoogleRegister}
           cookiePolicy={'single_host_origin'}
         />
+        <FacebookLogin
+          appId="1122857081471819"
+          autoLoad={false}
+          fields="name,email,picture"
+          callback={handleFacebookRegister}
+          icon="fa-facebook" />
       </div>
 
       <p>Already have an account? <Link to="/login">Login</Link></p>

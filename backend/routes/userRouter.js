@@ -32,5 +32,8 @@ router.post("/google_login", userController.googleLogin)
 
 router.post("/google_register", userController.googleRegister)
 
+router.post("/facebook_login", userController.facebookLogin)
+
+router.post("/facebook_register", userController.facebookRegister)
 
 module.exports = router 

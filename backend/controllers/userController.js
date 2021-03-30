@@ -5,6 +5,7 @@ const sendMail = require("./sendMail")
 
 const { google } = require('googleapis')
 const { OAuth2 } = google.auth
+const fetch = require('node-fetch')
 
 const client = new OAuth2(process.env.MAILING_SERVICE_CLIENT_ID)
 
@@ -307,9 +308,91 @@ const userController = {
     } catch (err) {
       return res.status(500).json({ msg: err.message })
     }
+  },
+  facebookLogin: async (req, res) => {
+    try {
+      const { accessToken, userID } = req.body
+
+      const URL = ` "https://graph.facebook.com/v2.9/${userID}/fields=id,name,email,picture"?access_token=${accessToken}`
+
+      const data = await fetch(URL).then(res => res.json()).then(res => { return res })
+
+      console.log(data)
+      const { email, name, picture } = data
+
+      const password = email + process.env.FACEBOOK_SECRET
+
+      const passwordHash = await bcrypt.hash(password, 12)
+
+      const user = await Users.findOne({ email })
+
+      if (user) {
+        const isMatch = await bcrypt.compare(password, user.password)
+        if (!isMatch)
+          return res.status(400).json({ msg: 'Password is incorrect.' })
+
+        const refresh_token = createRefreshToken({ id: user._id })
+        res.cookie('refreshtoken', refresh_token, {
+          httpOnly: true,
+          path: '/user/refresh_token',
+          maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+        })
+
+        res.json({ msg: "Login success!" })
+      } else {
+        return res.status(400).json({ msg: "Please create an account first before you may login with Facebook." })
+      }
+
+    } catch (err) {
+      return res.status(500).json({ msg: err.message })
+    }
+  },
+  facebookRegister: async (req, res) => {
+    try {
+      const { accessToken, userID } = req.body
+
+      const URL = `https://graph.facebook.com/v2.9/${userID}/?fields=id,name,email,picture&access_token=${accessToken}`
+
+      const data = await fetch(URL)
+        .then(res => res.json())
+        .then(res => {
+          return res
+        })
+
+      console.log(data)
+
+      const { email, name, picture } = data
+
+      const password = email + process.env.FACEBOOK_SECRET
+
+      const passwordHash = await bcrypt.hash(password, 12)
+
+      const user = await Users.findOne({ email })
+      if (user) {
+        return res.status(400).json({ msg: "An account with this email address already exists. Try login." })
+      } else {
+        const phone = req.body.phone
+
+        if (!validatePhone(phone))
+          return res.status(400).json({ msg: "Please enter a valid phone number." })
+
+        const phoneExists = await Users.findOne({ phone })
+        if (phoneExists)
+          return res.status(400).json({ msg: "An account with this phone number already exists. Please enter your mobile phone number." })
+
+        const newUser = new Users({
+          name, email, phone: phone, password: passwordHash, avatar: picture.data.url
+        })
+
+        await newUser.save()
+        res.json({ msg: "Your account has been created successfully! Please login with your Facebook account." })
+      }
+
+    } catch (err) {
+      return res.status(500).json({ msg: err.message })
+    }
   }
 }
-
 
 function validateEmail(email) {
   const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
