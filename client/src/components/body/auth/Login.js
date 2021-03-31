@@ -4,8 +4,6 @@ import axios from "axios"
 import { showErrMsg, showSuccessMsg } from "../../utils/notification/Notification"
 import { dispatchLogin } from "../../../redux/actions/authAction"
 import { useDispatch } from "react-redux"
-import { GoogleLogin } from 'react-google-login';
-import FacebookLogin from 'react-facebook-login'
 
 const initialState = {
   email: '',
@@ -43,43 +41,6 @@ function Login() {
     }
   }
 
-  const handleGoogleLogin = async (response) => {
-    try {
-
-      const res = await axios.post('/user/google_login', {
-        tokenId: response.tokenId
-      })
-
-      setUser({ ...user, err: '', success: res.data.msg })
-      localStorage.setItem('firstLogin', true)
-
-      dispatch(dispatchLogin())
-      history.push("/")
-    } catch (err) {
-      (err.response.data.msg && err.response.data.msg !== 'The verifyIdToken method requires an ID Token') &&
-        setUser({ ...user, err: err.response.data.msg, success: '' })
-    }
-  }
-
-  const handleFacebookLogin = async (response) => {
-    console.log(response)
-    try {
-      const { accessToken, userID } = response
-      const res = await axios.post('/user/facebook_login', {
-        accessToken, userID
-      })
-
-      setUser({ ...user, err: '', success: res.data.msg })
-      localStorage.setItem('firstLogin', true)
-
-      dispatch(dispatchLogin())
-      history.push("/")
-    } catch (err) {
-      err.response.data.msg &&
-        setUser({ ...user, err: err.response.data.msg, success: '' })
-    }
-  }
-
   return (
     <div className="login_page">
       <h2>Login</h2>
@@ -103,24 +64,6 @@ function Login() {
         </div>
 
       </form>
-
-      <div className="hr">Signed up with Google?</div>
-
-      <div className="social">
-        <GoogleLogin
-          clientId="998673085002-9pcvhkm6umtj4ephltodmt3u24180a6k.apps.googleusercontent.com"
-          buttonText="Login with Google"
-          onSuccess={handleGoogleLogin}
-          onFailure={handleGoogleLogin}
-          cookiePolicy={'single_host_origin'}
-        />
-        <FacebookLogin
-          appId="1122857081471819"
-          autoLoad={false}
-          fields="name,email,picture"
-          callback={handleFacebookLogin}
-          icon="fa-facebook" />
-      </div>
 
       <p>Don't have an account yet? <Link to="/register">Register</Link></p>
     </div>
