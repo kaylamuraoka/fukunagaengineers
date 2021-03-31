@@ -2,7 +2,7 @@
   "name": "fukunagaengineers",
   "version": "1.0.0",
   "description": "",
-  "main": "backend/server.js",
+  "main": "server.js",
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cloudinary": "^1.25.1",
@@ -19,8 +19,8 @@
   },
   "devDependencies": {},
   "scripts": {
-    "start": "node backend/server.js",
-    "server": "nodemon backend/server.js",
+    "start": "node server.js",
+    "server": "nodemon server.js",
     "client": "cd client && npm run start",
     "server-install": "npm install",
     "client-install": "cd client && npm install",
@@ -28,7 +28,7 @@
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "build": "cd client && npm run build",
     "heroku-postbuild": "cd client && npm install && npm run build",
-    "reset": "node backend/utils/dbReset.js"
+    "reset": "node utils/dbReset.js"
   },
   "repository": {
     "type": "git",
