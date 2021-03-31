@@ -86,10 +86,6 @@ const schoolSchema = new mongoose.Schema({
   year_built: {
     type: Number
   },
-  sold: {
-    type: Number,
-    default: 0
-  }
 })
 
 module.exports = mongoose.model("Schools", schoolSchema)
