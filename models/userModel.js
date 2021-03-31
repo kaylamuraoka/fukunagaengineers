@@ -30,6 +30,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: "https://res.cloudinary.com/dprurap3r/image/upload/v1616619478/avatar/avatar-placeholder_ffoxxp.png"
   },
+  projects: {
+    type: Array,
+    default: []
+  }
 }, {
   timestamps: true
 })
