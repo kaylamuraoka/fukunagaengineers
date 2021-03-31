@@ -19,7 +19,7 @@ app.use('/user', require("./routes/userRouter"))
 app.use('/api', require('./routes/upload'))
 
 // Connect to mongodb
-const URI = process.env.MONGODB_UR
+const URI = process.env.MONGODB_URL
 mongoose.connect(URI, {
   useCreateIndex: true,
   useFindAndModify: false,
@@ -30,10 +30,13 @@ mongoose.connect(URI, {
   console.log("Connected to MongoDB Successfully")
 })
 
-// app.use(express.static(path.join(__dirname, '../build')))
-// app.get('*', (req, res) => {
-//   res.sendFile(path.join(__dirname, '../build'))
-// })
+
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static('client/build'))
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'))
+  })
+}
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
