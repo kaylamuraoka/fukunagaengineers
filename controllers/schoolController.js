@@ -1,9 +1,42 @@
 const Schools = require('../models/schoolModel')
 
+
+// Filtering, sorting, and paginating
+class APIfeatures {
+  constructor(query, queryString) {
+    this.query = query;
+    this.queryString = queryString;
+  }
+
+  filtering() {
+    const queryObj = { ...this.queryString } // queryString = req.query
+
+    const excludedFields = ['page', 'sort', 'limit']
+    excludedFields.forEach(element => delete (queryObj[element]))
+
+    let queryStr = JSON.stringify(queryObj)
+    queryStr = queryStr.replace(/\b(gte|gt|lt|lte|regex)\b/g, match => '$' + match)
+
+    // gte = greater than or equal to
+    // lte = less than or equal to
+    // lt = less than
+    // gt = greater than
+    this.query.find(JSON.parse(queryStr))
+
+    return this;
+  }
+
+  sorting() { }
+  paginating() { }
+}
+
 const schoolController = {
   getSchools: async (req, res) => {
     try {
-      const schools = await Schools.find()
+
+      const features = new APIfeatures(Schools.find(), req.query).filtering()
+
+      const schools = await features.query
 
       res.json(schools)
     } catch (err) {
