@@ -26,6 +26,43 @@ const uploadController = {
     } catch (err) {
       return res.status(500).json({ msg: err.message })
     }
+  },
+  // Genral upload image
+  uploadImage: (req, res) => {
+    try {
+      const file = req.files.file
+
+      cloudinary.v2.uploader.upload(file.tempFilePath, {
+        folder: 'fukunagaEngineers'
+      }, async (err, result) => {
+        if (err) throw err;
+        removeTmp(file.tempFilePath)
+
+        console.log({ result })
+        res.json({ public_id: result.public_id, url: result.secure_url })
+      })
+
+
+    } catch (err) {
+      return res.status(500).json({ msg: err.message })
+    }
+  },
+  deleteImage: (req, res) => {
+    try {
+      const { public_id } = req.body;
+      if (!public_id)
+        return res.status(400).json({ msg: 'No images selected.' })
+
+      cloudinary.v2.uploader.destroy(public_id, async (err, result) => {
+        if (err) throw err;
+
+        console.log({ result })
+        res.json({ msg: 'Deleted Image Successfully.' })
+      })
+
+    } catch (err) {
+      return res.status(500).json({ msg: err.message })
+    }
   }
 }
 
