@@ -26,7 +26,17 @@ class APIfeatures {
     return this;
   }
 
-  sorting() { }
+  sorting() {
+    if (this.queryString.sort) {
+      const sortBy = this.queryString.sort.split(',').join(' ')
+      this.query = this.query.sort(sortBy)
+    } else {
+      this.query = this.query.sort('-createdAt')
+    }
+
+    return this;
+  }
+
   paginating() { }
 }
 
@@ -34,7 +44,7 @@ const schoolController = {
   getSchools: async (req, res) => {
     try {
 
-      const features = new APIfeatures(Schools.find(), req.query).filtering()
+      const features = new APIfeatures(Schools.find(), req.query).filtering().sorting()
 
       const schools = await features.query
 

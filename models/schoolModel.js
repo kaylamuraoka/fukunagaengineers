@@ -86,6 +86,9 @@ const schoolSchema = new mongoose.Schema({
   year_built: {
     type: Number
   },
-})
+},
+  {
+    timestamps: true
+  })
 
 module.exports = mongoose.model("Schools", schoolSchema)
