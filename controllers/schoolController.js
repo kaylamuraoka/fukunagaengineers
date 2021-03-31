@@ -37,18 +37,29 @@ class APIfeatures {
     return this;
   }
 
-  paginating() { }
+  paginating() {
+    const page = this.queryString.page * 1 || 1
+    const limit = this.queryString.limit * 1 || 9
+    const skip = (page - 1) * limit
+    this.query = this.query.skip(skip).limit(limit)
+    return this;
+
+  }
 }
 
 const schoolController = {
   getSchools: async (req, res) => {
     try {
 
-      const features = new APIfeatures(Schools.find(), req.query).filtering().sorting()
+      const features = new APIfeatures(Schools.find(), req.query).filtering().sorting().paginating()
 
       const schools = await features.query
 
-      res.json(schools)
+      res.json({
+        status: 'success',
+        result: schools.length,
+        schools: schools
+      })
     } catch (err) {
       return res.status(500).json({ msg: err.message })
     }
